@@ -16,7 +16,8 @@ class GithubProvider extends ProviderAbstract
         $params = [
             'client_id'     => $this->clientId,
             'redirect_uri'  => $this->redirectUrl,
-            'state'         => $this->state
+            'state'         => $this->state,
+            'scope'         => 'user repo'
         ];
 
         return $this->buildAuthUrl('https://github.com/login/oauth/authorize', $params);
@@ -35,8 +36,15 @@ class GithubProvider extends ProviderAbstract
      *
      * @return array
      */
-    protected function getAccessTokenFromResponse()
+    protected function getAccessToken()
     {
+        // return from session if find
+        if (request()->session()->has(self::GITHUB_SESSION_KEY)) {
+            $accessToken = request()->session()->get(self::GITHUB_SESSION_KEY);
+
+            return $accessToken;
+        }
+
         $code = request()->input('code');
 
         $accessToken = $this->postDataToProvider($this->getAccessTokenUrl(), [
@@ -46,7 +54,12 @@ class GithubProvider extends ProviderAbstract
             'redirect_uri'  => $this->redirectUrl
         ]);
 
-        return $accessToken;
+        if (isset($accessToken['access_token'])) {
+            // store access_token in session
+            request()->session()->put(self::GITHUB_SESSION_KEY, $accessToken['access_token']);
+        }
+
+        return $accessToken['access_token'];
     }
 
     /**
@@ -54,7 +67,7 @@ class GithubProvider extends ProviderAbstract
      */
     public function getUser()
     {
-        $accessToken = $this->getAccessTokenFromResponse()['access_token'];
+        $accessToken = $this->getAccessToken();
 
         $userUrl = 'https://api.github.com/user?access_token='.$accessToken;
 
@@ -68,7 +81,16 @@ class GithubProvider extends ProviderAbstract
      */
     public function getIssues()
     {
+        $accessToken = $this->getAccessToken();
 
+        $issueUrl = 'https://api.github.com/user/issues?access_token='.$accessToken;
+        $issues = $this->getDataFromProvider($issueUrl, [
+            'headers'   => [
+                'Accept'    => 'application/vnd.github.v3.raw+json'
+            ]
+        ]);
+
+        return $issues;
     }
 
     /**
@@ -76,7 +98,12 @@ class GithubProvider extends ProviderAbstract
      */
     public function getRepositories()
     {
+        $accessToken = $this->getAccessToken();
 
+        $repoUrl = 'https://api.github.com/user/repos?access_token='.$accessToken;
+        $repositories = $this->getDataFromProvider($repoUrl, $this->getHeaders());
+
+        return $repositories;
     }
 
     /**

@@ -62,4 +62,14 @@ class LoginController extends Controller
     {
         $user = $this->gitProvider->getUser();
     }
+
+    public function getIssues()
+    {
+        $issues = $this->gitProvider->getIssues();
+    }
+
+    public function getRepositories()
+    {
+        $repositories = $this->gitProvider->getRepositories();
+    }
 }
