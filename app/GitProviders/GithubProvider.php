@@ -116,7 +116,7 @@ class GithubProvider extends ProviderAbstract
         return [
             'headers' => [
                 'Accept' => 'application/vnd.github.v3+json',
-            ],
+            ]
         ];
     }
 }
