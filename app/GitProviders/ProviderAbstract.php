@@ -83,7 +83,7 @@ abstract class ProviderAbstract implements GitProviderInterface
     }
 
     /**
-     * Get request to the provider
+     * GET request to the provider
      *
      * @param $url
      * @param $headers
