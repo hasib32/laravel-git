@@ -14,3 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('loginWith', 'Auth\LoginController@redirectToProvider');
+Route::get('loginWith/github/callback', 'Auth\LoginController@handleProviderCallback');
+
+Route::get('/issues', 'GitController@getIssues')->name('issues');
+Route::get('/repos', 'GitController@getRepositories')->name('repos');
