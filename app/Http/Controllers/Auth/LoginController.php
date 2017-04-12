@@ -58,18 +58,15 @@ class LoginController extends Controller
         return $this->gitProvider->redirect();
     }
 
+    /**
+     * Redirect home view with user data
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function handleProviderCallback()
     {
         $user = $this->gitProvider->getUser();
-    }
 
-    public function getIssues()
-    {
-        $issues = $this->gitProvider->getIssues();
-    }
-
-    public function getRepositories()
-    {
-        $repositories = $this->gitProvider->getRepositories();
+        return view('home', ['user' => $user]);
     }
 }

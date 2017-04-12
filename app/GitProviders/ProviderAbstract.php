@@ -36,7 +36,7 @@ abstract class ProviderAbstract implements GitProviderInterface
     protected $httpClient;
 
     /**
-     * Create a new controller instance.
+     * Create a new provider instance.
      *
      * @param $clientId
      * @param $clientSecret
